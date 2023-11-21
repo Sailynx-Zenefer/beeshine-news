@@ -83,6 +83,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof article[0].article_img_url).toBe("string");
       });
   });
+
   test("GET:404 - responds with a 404 status code and relevant error message when supplied with a non-existant article_id", () => {
     return request(app)
       .get("/api/articles/99")
@@ -94,6 +95,52 @@ describe("GET /api/articles/:article_id", () => {
   test("GET:400 - responds with a 400 status code and relevant error message when supplied with an invalid article_id", () => {
     return request(app)
       .get("/api/articles/;DROP TABLE articles;")
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Bad Request: Invalid Input");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("GET:200 - responds with a 200 status code and an array of comments matching the supplied article id", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ _body: { comments } }) => {
+        expect(comments.length).toBe(2);
+        expect(comments).toBeSorted("created_at",{descending: true });
+        comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+        });
+      });
+  });
+  test("GET:404 - responds with a 404 status code and relevant error message when supplied with a non-existant article_id", () => {
+    return request(app)
+      .get("/api/articles/99/comments")
+      .expect(404)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Article with that Id does not exist, nor are there any comments with a matching article Id!");
+      });
+  });
+
+  test("GET:404 - responds with a 404 status code and relevant error message when no comments are found for existing article_id", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(404)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("There are no comments for an article with that Id!",);
+      });
+  });
+
+  test("GET:400 - responds with a 400 status code and relevant error message when supplied with an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/;DROP TABLE comments;/comments")
       .expect(400)
       .then(({ _body }) => {
         expect(_body.msg).toBe("Bad Request: Invalid Input");
