@@ -1,7 +1,6 @@
 exports.handlePsqlErrors = (err, req, res, next) => {
   const psqlErrs = {
-    23502: [400, "Bad request"],
-    "22P02": [400, "Bad request"],
+    "22P02": [400, "Bad Request: Invalid Input"],
   };
 
   if (psqlErrs[err.code]) {

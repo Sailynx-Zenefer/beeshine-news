@@ -44,6 +44,41 @@ describe("GET /api/", () => {
     });
   });
 
+  describe("GET /api/articles/:article_id", () => {
+    test("GET:200 - responds with a 200 status code and an article matching the supplied article id", () => {
+      return request(app)
+        .get("/api/articles/5")
+        .expect(200)
+        .then(({_body : {article}}) => {
+          expect(article.length).toBe(1);
+          expect(typeof article[0].article_id).toBe("number");
+          expect(typeof article[0].title).toBe("string");
+          expect(typeof article[0].topic).toBe("string");
+          expect(typeof article[0].author).toBe("string");
+          expect(typeof article[0].body).toBe("string");
+          expect(typeof article[0].created_at).toBe("string");
+          expect(typeof article[0].votes).toBe("number");
+          expect(typeof article[0].article_img_url).toBe("string");
+        });
+    });
+    test("GET:404 - responds with a 404 status code and relevant error message when supplied with a non-existant article_id", () => {
+      return request(app)
+        .get("/api/articles/99")
+        .expect(404)
+        .then(({_body}) => {
+          expect(_body.msg).toBe("Article with that Id does not exist!")
+        });
+    });
+    test("GET:400 - responds with a 400 status code and relevant error message when supplied with an invalid article_id", () => {
+      return request(app)
+        .get("/api/articles/;DROP TABLE articles;")
+        .expect(400)
+        .then(({_body}) => {
+          expect(_body.msg).toBe("Bad Request: Invalid Input")
+        });
+    });
+  });
+
 describe("general api errors", () => {
   test("GET 404 : BAD REQUEST - responds with a 404 status code, when a non-existant endpoint is tried ", () => {
     return request(app)
