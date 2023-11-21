@@ -14,3 +14,16 @@ exports.selectArticleById = (article_id) => {
   })
 };
 
+exports.selectArticles = () => {
+  return db.query(`
+  SELECT articles.article_id,title,topic,articles.author,articles.created_at,articles.votes,article_img_url,
+  COUNT(comment_id) ::INT as comment_count 
+  FROM articles JOIN comments ON comments.article_id = articles.article_id
+  GROUP BY articles.article_id ORDER BY created_at DESC;`)
+  .then(({rows : articleRows}) => {
+    if (articleRows.length < 1){
+        return Promise.reject({status: 404, msg : "No articles currently exist..."})
+    }
+    return articleRows
+  })
+};
