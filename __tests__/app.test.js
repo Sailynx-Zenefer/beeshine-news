@@ -37,14 +37,9 @@ describe("GET /api/", () => {
         .expect(200)
         .then(({_body}) => {
           expect(_body.endpoints);
-          const endpointNames = Object.keys(_body.endpoints)
-          const endpointNamesRef = Object.keys(endpointsRef)
-          expect (endpointNames).toEqual(endpointNamesRef)
-          endpointNames.forEach((endpoint) => {
-            const endpointProperties = Object.keys(_body.endpoints[endpoint])
-            const endpointPropertiesRef = Object.keys(endpointsRef[endpoint])
-            expect (endpointProperties).toEqual(endpointPropertiesRef)
-          });
+          const endpointsStr = JSON.stringify(_body.endpoints)
+          const endpointsStrRef = JSON.stringify(endpointsRef)
+          expect (endpointsStr).toEqual(endpointsStrRef)
         });
     });
   });
