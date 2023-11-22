@@ -103,6 +103,17 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
+  
+  test("GET:200 - responds with an empty array when there are no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ _body: { comments } }) => {
+        expect(comments.length).toBe(0)
+        expect(comments).toEqual([]);
+      });
+  });
+
   test("GET:200 - responds with a 200 status code and an array of comments matching the supplied article id", () => {
     return request(app)
       .get("/api/articles/5/comments")
@@ -126,15 +137,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ _body }) => {
         expect(_body.msg).toBe("Article with that Id does not exist, nor are there any comments with a matching article Id!");
-      });
-  });
-
-  test("GET:404 - responds with a 404 status code and relevant error message when no comments are found for existing article_id", () => {
-    return request(app)
-      .get("/api/articles/2/comments")
-      .expect(404)
-      .then(({ _body }) => {
-        expect(_body.msg).toBe("There are no comments for an article with that Id!",);
       });
   });
 

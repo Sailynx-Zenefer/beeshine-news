@@ -32,14 +32,7 @@ exports.getCommentsByArticleId = ({params : {article_id}}, res, next) => {
   ])
     .then(([article_idCheck, {rows:commentsRows}]) => {
       if (article_idCheck.length) {
-        if(commentsRows.length){
           res.status(200).send({ comments: commentsRows });
-        }else {
-          return Promise.reject({
-            status: 404,
-            msg: "There are no comments for an article with that Id!",
-        });}
-        
       }else {
         return Promise.reject({
           status: 404,
