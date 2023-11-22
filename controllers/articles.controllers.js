@@ -1,10 +1,8 @@
+const { forEach } = require("../db/data/test-data/articles");
 const {
   selectArticleById,
   selectArticles,
-  selectCommentsByArticleId,
 } = require("../models/articles.models");
-
-const { checkArticleIdExists } = require("../utils");
 
 exports.getArticles = (req, res, next) => {
   return selectArticles()
@@ -25,20 +23,4 @@ exports.getArticleById = (req, res, next) => {
     .catch(next);
 };
 
-exports.getCommentsByArticleId = ({params : {article_id}}, res, next) => {
-  return Promise.all([
-    checkArticleIdExists(article_id),
-    selectCommentsByArticleId(article_id),
-  ])
-    .then(([article_idCheck, {rows:commentsRows}]) => {
-      if (article_idCheck.length) {
-          res.status(200).send({ comments: commentsRows });
-      }else {
-        return Promise.reject({
-          status: 404,
-          msg: "Article with that Id does not exist, nor are there any comments with a matching article Id!",
-        });
-      }
-    })
-    .catch(next);
-};
+

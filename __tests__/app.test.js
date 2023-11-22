@@ -150,6 +150,84 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST:201 - responds with a 201 status code and a correctly formatted comment object reflecting the supplied article id and other information", () => {
+    const testComment = {
+      "username" : "icellusedkars",
+      "body" : "The cats know what they're doing, I trust them... miaow."
+    }
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({body:{comment}}) => {
+          expect(comment.comment_id).toBe(19);
+          expect(comment.body).toBe("The cats know what they're doing, I trust them... miaow.");
+          expect(comment.votes).toBe(0);
+          expect(comment.author).toBe("icellusedkars");
+          expect(comment.article_id).toBe(5);
+          expect(typeof comment.created_at).toBe("string");
+      });
+  });
+  test("POST:404 - responds with a 404 status code and relevant error message when attempting to POST to a non-existant article_id", () => {
+    const testComment2 = {
+      "username" : "icellusedkars",
+      "body" : "Is this the CAR or CDR of reality?"
+    }
+    return request(app)
+      .post("/api/articles/99/comments")
+      .send(testComment2)
+      .expect(404)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Article with that Id does not exist, therefore you cannot post to it!");
+      });
+  });
+
+  test("POST:400 - responds with a 400 status code and relevant error message when request body uses a username not in the db", () => {
+    const testComment3 = {
+      "username" : "god",
+      "body" : "will my comment be registered?"
+    }
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(testComment3)
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("username not registered, please use another!");
+      });
+  });
+
+  test("POST:400 - responds with a 400 status code and relevant error message when request body has incorrect formatting", () => {
+    const testComment4 = {
+      "username" : "icellusedkars",
+      "body" : "maybe I can securly store my biscuits here?",
+      "biscuits" : 54321,
+      "password" : "drowssap"
+    }
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(testComment4)
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Invalid Comment Format!");
+      });
+  });
+
+  test("POST:400 - responds with a 400 status code and relevant error message when supplied with an invalid article_id", () => {
+    const testComment5 = {
+      "username" : "icellusedkars",
+      "body" : "The cats know what they're doing, I trust them... miaow."
+    }
+    return request(app)
+      .post("/api/articles/;DROP TABLE comments;/comments")
+      .send(testComment5)
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Bad Request: Invalid Input");
+      });
+  });
+});
+
 describe("general api errors", () => {
   test("GET 404 : BAD REQUEST - responds with a 404 status code, when a non-existant endpoint is tried ", () => {
     return request(app)
