@@ -9,7 +9,8 @@ const {
 } = require("./controllers/articles.controllers")
 const {
     getCommentsByArticleId,
-    postCommentByArticleId
+    postCommentByArticleId,
+    srvDeleteCommentByCommentId
 } = require("./controllers/comments.controllers")
 const {handleCustomErrors, handlePsqlErrors} = require("./errors");
 
@@ -29,7 +30,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
-
+app.delete("/api/comments/:comment_id", srvDeleteCommentByCommentId)
 
 app.all("*",catchAll)
 

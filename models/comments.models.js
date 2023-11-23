@@ -19,3 +19,10 @@ exports.insertCommentByArticleId = ({username,body}, article_id) => {
         )
   }
   
+exports.dbDeleteCommentByCommentId = (comment_id) => {
+  return db.query(`
+  DELETE FROM comments
+  WHERE comment_id = $1
+  RETURNING *;`,
+  [comment_id])
+}

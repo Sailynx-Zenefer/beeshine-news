@@ -2,6 +2,7 @@ const { forEach } = require("../db/data/test-data/articles");
 const {
   selectCommentsByArticleId,
   insertCommentByArticleId,
+  dbDeleteCommentByCommentId
 } = require("../models/comments.models");
 const {
   checkCommentFormat,
@@ -71,3 +72,19 @@ exports.getCommentsByArticleId = ({ params: { article_id } }, res, next) => {
       })
       .catch(next);
   };
+
+exports.srvDeleteCommentByCommentId = ({params : {comment_id}},res,next) => {
+
+  return dbDeleteCommentByCommentId(comment_id)
+  .then(({rows : deletedCommentRow})=>{
+    if(deletedCommentRow.length){
+      res.status(204).send();
+    }else{
+      return Promise.reject({
+        status: 404,
+        msg: "Comment with that Id does not exist!",
+      });
+    }
+  })
+  .catch(next)
+}

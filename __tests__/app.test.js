@@ -147,19 +147,19 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(_body.msg).toBe("Bad Request: Invalid Input");
       });
   });
-});
 
-test("PATCH:400 - responds with a 400 status code and relevant error message when sent an invalid vote Object", () => {
-  const testVote4 = {
-    inc_gold_stars : "5 bajillion"
-  }
-  return request(app)
-    .patch("/api/articles/5")
-    .send(testVote4)
-    .expect(400)
-    .then(({ _body }) => {
-      expect(_body.msg).toBe("Invalid vote object recieved!");
-    });
+  test("PATCH:400 - responds with a 400 status code and relevant error message when sent an invalid vote Object", () => {
+    const testVote4 = {
+      inc_gold_stars : "5 bajillion"
+    }
+    return request(app)
+      .patch("/api/articles/5")
+      .send(testVote4)
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Invalid vote object recieved!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -281,6 +281,35 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/;DROP TABLE comments;/comments")
       .send(testComment5)
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Bad Request: Invalid Input");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("DELETE:204 - responds with a 204 and no content", () => {
+    return request(app)
+      .delete("/api/comments/5")
+      .expect(204)
+      .then(({_body}) => {
+        expect(!_body);
+      });
+  });
+
+  test("DELETE:404 - responds with a 404 and relevant error message when supplied a non-existing comment_id ", () => {
+    return request(app)
+      .delete("/api/comments/789")
+      .expect(404)
+      .then(({_body}) => {
+        expect(_body.msg).toBe('Comment with that Id does not exist!')
+      });
+  });
+
+  test("DELETE:400 - responds with a 400 status code and relevant error message when supplied with an invalid article_id", () => {
+    return request(app)
+      .delete("/api/comments/;DROP TABLE comments;")
       .expect(400)
       .then(({ _body }) => {
         expect(_body.msg).toBe("Bad Request: Invalid Input");
