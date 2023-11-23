@@ -72,15 +72,14 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/5")
       .expect(200)
       .then(({ _body: { article } }) => {
-        expect(article.length).toBe(1);
-        expect(article[0].article_id).toBe(5);
-        expect(typeof article[0].title).toBe("string");
-        expect(typeof article[0].topic).toBe("string");
-        expect(typeof article[0].author).toBe("string");
-        expect(typeof article[0].body).toBe("string");
-        expect(typeof article[0].created_at).toBe("string");
-        expect(typeof article[0].votes).toBe("number");
-        expect(typeof article[0].article_img_url).toBe("string");
+        expect(article.article_id).toBe(5);
+        expect(article.title).toBe("UNCOVERED: catspiracy to bring down democracy");
+        expect(article.topic).toBe("cats");
+        expect(article.author).toBe("rogersop");
+        expect(article.body).toBe("Bastet walks amongst us, and the cats are taking arms!");
+        expect(article.created_at).toBe("2020-08-03T13:14:00.000Z");
+        expect(article.votes).toBe(0);
+        expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
       });
   });
 
@@ -100,6 +99,67 @@ describe("GET /api/articles/:article_id", () => {
         expect(_body.msg).toBe("Bad Request: Invalid Input");
       });
   });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH:200 - responds with a 200 status code and an article matching the supplied article id", () => {
+    const testVote = {
+      inc_votes : 1
+    }
+    return request(app)
+      .patch("/api/articles/5")
+      .send(testVote)
+      .expect(200)
+      .then(({ _body: { article } }) => {
+        expect(article.article_id).toBe(5);
+        expect(article.title).toBe("UNCOVERED: catspiracy to bring down democracy");
+        expect(article.topic).toBe("cats");
+        expect(article.author).toBe("rogersop");
+        expect(article.body).toBe("Bastet walks amongst us, and the cats are taking arms!");
+        expect(article.created_at).toBe("2020-08-03T13:14:00.000Z");
+        expect(article.votes).toBe(1);
+        expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+      });
+  });
+
+  test("PATCH:404 - responds with a 404 status code and relevant error message when supplied with a non-existant article_id", () => {
+    const testVote2 = {
+      inc_votes : 2
+    }
+    return request(app)
+      .patch("/api/articles/99")
+      .send(testVote2)
+      .expect(404)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Article with that Id does not exist, nor can votes be added to it!");
+      });
+  });
+
+  test("PATCH:400 - responds with a 400 status code and relevant error message when supplied with an invalid article_id", () => {
+    const testVote3 = {
+      inc_votes : 3
+    }
+    return request(app)
+      .patch("/api/articles/;DROP TABLE articles;")
+      .send(testVote3)
+      .expect(400)
+      .then(({ _body }) => {
+        expect(_body.msg).toBe("Bad Request: Invalid Input");
+      });
+  });
+});
+
+test("PATCH:400 - responds with a 400 status code and relevant error message when sent an invalid vote Object", () => {
+  const testVote4 = {
+    inc_gold_stars : "5 bajillion"
+  }
+  return request(app)
+    .patch("/api/articles/5")
+    .send(testVote4)
+    .expect(400)
+    .then(({ _body }) => {
+      expect(_body.msg).toBe("Invalid vote object recieved!");
+    });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

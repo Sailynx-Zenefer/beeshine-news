@@ -10,7 +10,7 @@ exports.checkCommentFormat = (comment) => {
 };
 
 exports.checkArticleIdExists = (article_id) => {
-  return db
+    return db
     .query(
       `
     SELECT articles.article_id, comments.article_id FROM articles FULL JOIN comments ON comments.article_id = articles.article_id
@@ -19,7 +19,7 @@ exports.checkArticleIdExists = (article_id) => {
     )
     .then(({ rows: article_idRows }) => {
       return article_idRows.length > 0;
-    });
+    })
 };
 
 exports.checkUserNameExists = (username) => {
@@ -33,4 +33,9 @@ exports.checkUserNameExists = (username) => {
     .then(({ rows: usernameExists }) => {
       return usernameExists.length > 0;
     });
+};
+
+exports.checkVoteObj = (voteObj) => {
+  validVoteObj = Object.keys(voteObj).length === 1 && typeof voteObj.inc_votes === "number"
+  return validVoteObj
 };
