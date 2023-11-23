@@ -1,5 +1,9 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const {
+  checkArticleIdExists,
+  checkVoteObj
+} = require("../utils");
 
 exports.selectArticles = () => {
   return db.query(`
@@ -25,4 +29,25 @@ exports.selectArticleById = (article_id) => {
     return articleRow
   })
 };
+
+exports.updateNewVoteByArticleId = (voteObj,article_id) => {
+  return Promise.all([
+    checkArticleIdExists(article_id),
+    checkVoteObj(voteObj),
+  ])
+  .then(([articleExists,validVoteObj]) => {
+    if(!articleExists){
+      return Promise.reject({status: 404, msg : "Article with that Id does not exist, nor can votes be added to it!"})
+    }
+    if(!validVoteObj){
+      return Promise.reject({status: 400, msg : "Invalid vote object recieved!"})
+    }
+    return db.query(`
+    UPDATE articles
+    SET
+      votes = votes + $1
+    WHERE article_id = $2
+    RETURNING *;`,[voteObj.inc_votes,article_id])
+  })
+}
 

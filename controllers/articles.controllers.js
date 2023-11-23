@@ -2,6 +2,7 @@ const { forEach } = require("../db/data/test-data/articles");
 const {
   selectArticleById,
   selectArticles,
+  updateNewVoteByArticleId
 } = require("../models/articles.models");
 
 exports.getArticles = (req, res, next) => {
@@ -12,15 +13,20 @@ exports.getArticles = (req, res, next) => {
     .catch(next);
 };
 
-exports.getArticleById = (req, res, next) => {
-  const {
-    params: { article_id },
-  } = req;
+exports.getArticleById = ({ params : {article_id} }, res, next) => {
   return selectArticleById(article_id)
-    .then((articleRow) => {
-      res.status(200).send({ article: articleRow });
+    .then(([article]) => {
+      res.status(200).send({ article : article});
     })
     .catch(next);
 };
+
+exports.patchNewVoteByArticleId = ({body : voteObj, params : {article_id}}, res, next) => {
+    return updateNewVoteByArticleId(voteObj,article_id)
+    .then(({rows : [article]}) => {
+      res.status(200).send({ article: article })
+    })
+    .catch(next);
+}
 
 
