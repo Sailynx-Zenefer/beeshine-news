@@ -4,13 +4,13 @@
   "description": "bc-nc-news",
   "main": "listen.js",
   "scripts": {
+    "start": "node listen.js",
+    "seed-prod": "NODE_ENV=production npm run seed",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "wtest": "jest --watch",
-    "prepare": "husky install",
-    "start": "node listen.js",
-    "seed-prod": "NODE_ENV=production npm run seed"
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
