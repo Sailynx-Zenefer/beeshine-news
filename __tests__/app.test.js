@@ -44,6 +44,22 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  test("GET:200 - responds with a 200 status code and an array of user objects ", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ _body }) => {
+        expect(_body.users.length).toBe(4);
+        _body.users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+});
+
 describe("GET /api/articles", () => {
   test("GET:200 - responds with a 200 status code and an array of articles with the correct information", () => {
     return request(app)
