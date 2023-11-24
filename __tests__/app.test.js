@@ -66,7 +66,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ _body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(13);
         expect(articles).toBeSorted("created_at",{descending: true });
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");

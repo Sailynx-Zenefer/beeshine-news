@@ -10,7 +10,7 @@ exports.selectArticles = (query) => {
   let queryStr = `
     SELECT articles.article_id,title,topic,articles.author,articles.created_at,
     articles.votes,article_img_url, COUNT(comment_id) ::INT as comment_count 
-    FROM articles JOIN comments ON comments.article_id = articles.article_id `;
+    FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id `;
   const queryVals = [];
   return Promise.all([listTopics(), listArticleColumns()]).then(
     ([topicList, articleColumnList]) => {
@@ -41,7 +41,7 @@ exports.selectArticleById = (article_id) => {
       `
       SELECT articles.article_id,title,topic,articles.author,articles.body,articles.created_at,
       articles.votes,article_img_url, COUNT(comment_id) ::INT as comment_count 
-      FROM articles JOIN comments ON comments.article_id = articles.article_id
+      FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id
       WHERE articles.article_id = $1
       GROUP BY articles.article_id;`,
       [article_id]
