@@ -125,7 +125,6 @@ describe("GET /api/articles", () => {
   });
 });
 
-
 describe("GET /api/articles/:article_id", () => {
   test("GET:200 - responds with a 200 status code and an article matching the supplied article id", () => {
     return request(app)
@@ -140,6 +139,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article.created_at).toBe("2020-08-03T13:14:00.000Z");
         expect(article.votes).toBe(0);
         expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+        expect(article.comment_count).toBe(2);
       });
   });
 
