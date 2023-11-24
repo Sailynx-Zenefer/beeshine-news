@@ -39,3 +39,20 @@ exports.checkVoteObj = (voteObj) => {
   validVoteObj = Object.keys(voteObj).length === 1 && typeof voteObj.inc_votes === "number"
   return validVoteObj
 };
+
+exports.listTopics = () => {
+  return db
+    .query(`SELECT slug FROM topics;`)
+    .then(({rows : topicsRows}) => {
+      return validTopics = topicsRows.map((topic) => topic.slug)
+    })
+};
+
+exports.listArticleColumns = () => {
+  return db
+    .query(`SELECT column_name FROM information_schema.columns
+     WHERE table_name='articles';`)
+    .then(({rows : columns}) => {
+      return articlesColumns = columns.map((column) => column.column_name)
+    })
+};

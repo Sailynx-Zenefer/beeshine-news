@@ -1,7 +1,10 @@
 const db = require("../db/connection");
-const format = require("pg-format");
-const { checkArticleIdExists, checkVoteObj } = require("../utils");
-const queryRef = require("./query-ref.json");
+const {
+  checkArticleIdExists,
+  checkVoteObj,
+  listTopics,
+  listArticleColumns,
+} = require("../utils");
 
 exports.selectArticles = (query) => {
   let queryStr = `
@@ -9,23 +12,27 @@ exports.selectArticles = (query) => {
     articles.votes,article_img_url, COUNT(comment_id) ::INT as comment_count 
     FROM articles JOIN comments ON comments.article_id = articles.article_id `;
   const queryVals = [];
-  if (Object.keys(query).length === 1) {
-    const queryKey = Object.keys(query)[0];
-    queryVals.push(query[queryKey]);
-    if (
-      queryRef[queryKey] &&
-      queryRef[queryKey].includes(queryVals[0])
-    ) {
-      queryStr += ` WHERE ${queryKey} = $1`;
-    } else {
-      return Promise.reject({
-        status: 400,
-        msg: `Invalid query!`,
-      });
+  return Promise.all([listTopics(), listArticleColumns()]).then(
+    ([topicList, articleColumnList]) => {
+      if (Object.keys(query).length === 1) {
+        const queryKey = Object.keys(query)[0];
+        queryVals.push(query[queryKey]);
+        if (
+          topicList.includes(queryVals[0]) &&
+          articleColumnList.includes(queryKey)
+        ) {
+          queryStr += ` WHERE ${queryKey} = $1`;
+        } else {
+          return Promise.reject({
+            status: 400,
+            msg: `Invalid query!`,
+          });
+        }
+      }
+      queryStr += ` GROUP BY articles.article_id ORDER BY created_at DESC;`;
+      return db.query(queryStr, queryVals);
     }
-  }
-  queryStr += ` GROUP BY articles.article_id ORDER BY created_at DESC;`;
-  return db.query(queryStr, queryVals);
+  );
 };
 
 exports.selectArticleById = (article_id) => {

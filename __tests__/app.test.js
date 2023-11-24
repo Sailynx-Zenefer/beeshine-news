@@ -99,6 +99,14 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("GET 200 - valid topic query with no matching articles should return empty array", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ _body: { articles } }) => {
+        expect(articles).toEqual([]);
+      });
+  });
   test("GET 400 - invalid 'topic' query should return a 400 status code and relevant error msg", () => {
     return request(app)
       .get("/api/articles?topic=meanies")
