@@ -41,7 +41,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves a single article object corresponding to provided article_id",
-    "exampleQuery": 5,
+    "exampleParameter": 5,
     "exampleResponse": {
       "article": {
         "article_id": 5,
@@ -58,7 +58,7 @@
 
   "PATCH /api/articles/:article_id": {
     "description": "updates votes of article of article_id supplied with number of votes indicated in sent vote object, serves an updated article object",
-    "exampleQuery": 5,
+    "exampleParameter": 5,
     "exampleRequest": {
       "inc_votes": 1
     },
@@ -78,7 +78,7 @@
 
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments corresponding to provided article_id",
-    "exampleQuery": 5,
+    "exampleParameter": 5,
     "exampleResponse": {
       "comments": [
         {
@@ -94,7 +94,7 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "recieves a single comment object to be posted to the article of the supplied Id. ",
-    "exampleQuery": 5,
+    "exampleParameter": 5,
     "exampleRequest": {
       "username": "icellusedkars",
       "body": "The cats know what they're doing, I trust them... miaow."
@@ -110,6 +110,6 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes a single comment from the database, giving a 204 status code as confirmation of deletion. If deletion is successful, it should serve no content",
-    "exampleQuery": 5
+    "exampleParameter": 5
   }
 }

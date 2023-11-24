@@ -80,7 +80,43 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("GET 200 - valid topic query should return articles matching topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ _body: { articles } }) => {
+        expect(articles.length).toBe(1);
+        expect(articles).toBeSorted("created_at",{descending: true });
+        articles.forEach((article) => {
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.title).toBe("string");
+          expect(article.topic).toBe("cats");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+  test("GET 400 - invalid 'topic' query should return a 400 status code and relevant error msg", () => {
+    return request(app)
+      .get("/api/articles?topic=meanies")
+      .expect(400)
+      .then(({_body : {msg}}) => {
+        expect(msg).toBe('Invalid query!')
+      });
+  });
+  test("GET 400 - invalid query should return a 400 status code and relevant error msg", () => {
+    return request(app)
+      .get("/api/articles?random=ahhhh")
+      .expect(400)
+      .then(({_body : {msg}}) => {
+        expect(msg).toBe('Invalid query!')
+      });
+  });
 });
+
 
 describe("GET /api/articles/:article_id", () => {
   test("GET:200 - responds with a 200 status code and an article matching the supplied article id", () => {

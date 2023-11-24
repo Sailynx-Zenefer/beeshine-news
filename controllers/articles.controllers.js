@@ -4,9 +4,9 @@ const {
   updateNewVoteByArticleId
 } = require("../models/articles.models");
 
-exports.getArticles = (req, res, next) => {
-  return selectArticles()
-    .then((articleRows) => {
+exports.getArticles = ({query}, res, next) => {
+  return selectArticles(query)
+    .then(({rows : articleRows}) => {
       res.status(200).send({ articles: articleRows });
     })
     .catch(next);
