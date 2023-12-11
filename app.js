@@ -14,8 +14,10 @@ const {
     srvDeleteCommentByCommentId
 } = require("./controllers/comments.controllers")
 const {handleCustomErrors, handlePsqlErrors} = require("./errors");
+const cors = require('cors');
 
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 app.get("/api", getEndpoints)
 
